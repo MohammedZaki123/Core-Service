@@ -18,6 +18,7 @@ const USER_COLUMNS = [
     "id","email","phone","name","password_hash","system_role","created_at","updated_at","deleted_at"
 ]
 
+// for Login operation
 export async function getUserByEmail(email: string): Promise<User | undefined> {
     const record =
         await db.select(USER_COLUMNS).from('users').where(

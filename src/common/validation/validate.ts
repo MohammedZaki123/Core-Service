@@ -10,7 +10,7 @@ export async function validateBody <T extends Object>(cls: new () => T, body: un
 
     if(errors.length > 0) {
         const messages = errors.flatMap((e) => Object.values(e.constraints ?? {}));
-        throw new AppError(messages.join(', \n'), 400)
+        throw new AppError(messages.join('\n'), 400)
     }
     // a filtered and clean instance of the DTO class with only the properties defined in the class and
     // validated according to the decorators is returned

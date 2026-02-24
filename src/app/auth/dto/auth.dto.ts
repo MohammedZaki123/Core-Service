@@ -1,5 +1,5 @@
 import {SystemRole} from "../../user/enums";
-import {IsEmail, IsEnum, IsString, IsStrongPassword, MaxLength, MinLength} from "class-validator";
+import {IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, MaxLength, MinLength} from "class-validator";
 
 
 export class RegisterDto {
@@ -30,4 +30,35 @@ export class RegisterDto {
     @IsEnum(SystemRole)
     // checks that input role is a member of the SystemRole enum, which includes 'customer', 'restaurant_user', and 'delivery_agent'
     role!: SystemRole
+}
+
+export class LoginDto {
+    @IsEmail()
+    email!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    password!: string;
+}
+
+export class forgetPasswordDto {
+    @IsEmail()
+    email!: string;
+}
+
+export class resetPasswordDto {
+    @IsString()
+    @IsNotEmpty()
+    otp!: string;
+
+    @IsStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+    }, {
+        message: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol.',
+    })
+    newPassword!: string;
 }
