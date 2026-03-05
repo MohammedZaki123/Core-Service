@@ -4,14 +4,14 @@ exports.passwordReset = void 0;
 class passwordReset {
     id;
     userId;
-    otp_hash;
+    otpHash;
     expiresAt;
     createdAt;
     consumedAt;
     constructor(data) {
         this.id = data.id;
         this.userId = data.userId;
-        this.otp_hash = data.otp_hash;
+        this.otpHash = data.otpHash;
         this.expiresAt = data.expiresAt;
         this.createdAt = data.createdAt;
         this.consumedAt = data.consumedAt || null;

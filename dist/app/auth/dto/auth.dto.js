@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterDto = void 0;
+exports.refreshDTO = exports.resetPasswordDto = exports.forgetPasswordDto = exports.LoginDto = exports.RegisterDto = void 0;
 const enums_1 = require("../../user/enums");
 const class_validator_1 = require("class-validator");
 class RegisterDto {
@@ -41,7 +41,7 @@ __decorate([
         minLowercase: 1,
         minUppercase: 1,
         minNumbers: 1,
-        minSymbols: 1,
+        minSymbols: 0,
     }, {
         message: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol.',
     }),
@@ -53,3 +53,61 @@ __decorate([
     ,
     __metadata("design:type", String)
 ], RegisterDto.prototype, "role", void 0);
+class LoginDto {
+    email;
+    password;
+}
+exports.LoginDto = LoginDto;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "password", void 0);
+class forgetPasswordDto {
+    email;
+}
+exports.forgetPasswordDto = forgetPasswordDto;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], forgetPasswordDto.prototype, "email", void 0);
+class resetPasswordDto {
+    email;
+    otp;
+    newPassword;
+}
+exports.resetPasswordDto = resetPasswordDto;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], resetPasswordDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(6),
+    __metadata("design:type", String)
+], resetPasswordDto.prototype, "otp", void 0);
+__decorate([
+    (0, class_validator_1.IsStrongPassword)({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+    }, {
+        message: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol.',
+    }),
+    __metadata("design:type", String)
+], resetPasswordDto.prototype, "newPassword", void 0);
+class refreshDTO {
+    refreshToken;
+}
+exports.refreshDTO = refreshDTO;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], refreshDTO.prototype, "refreshToken", void 0);

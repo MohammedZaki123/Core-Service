@@ -21,3 +21,4 @@ export class User {
         this.deletedAt = data.deletedAt || null;
     }
 }
+

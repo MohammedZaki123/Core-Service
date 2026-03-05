@@ -7,6 +7,9 @@ exports.env = void 0;
 const dotenv_1 = require("dotenv");
 const zod_1 = require("zod");
 const path_1 = __importDefault(require("path"));
+const path_2 = require("path");
+// const __filename = fileURLToPath(import.meta.url);
+const __dirname = (0, path_2.dirname)(__filename);
 (0, dotenv_1.config)({ path: path_1.default.resolve(__dirname, '../../../.env') });
 const schema = zod_1.z.object({
     PORT: zod_1.z.string().default('3000'),

@@ -8,7 +8,7 @@ export type JwtPayload = {
     email: string;
     role: string;
 }
-export  function hashPassword(password: string): Promise<string> {
+export  async function hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
 }
 
@@ -32,6 +32,34 @@ export function createRefreshToken(payload: JwtPayload): string {
     return jwt.sign(payload, env.jwt.refreshSecret, options);
 }
 
+export function verifyAccessToken(token: string): JwtPayload {
+        const payload = jwt.verify(token, env.jwt.accessSecret) as JwtPayload;
+
+        return {
+            userId: payload.userId,
+            email: payload.email,
+            role: payload.role
+        }
+}
+
+export function verifyRefreshToken(token: string): JwtPayload {
+    // try {
+    //     return jwt.verify(token, env.jwt.refreshSecret) as JwtPayload;
+    // } catch (err) {
+    //     throw invalidTokenError;
+    // }
+    const payload = jwt.verify(token, env.jwt.refreshSecret) as JwtPayload;
+
+    return {
+        userId: payload.userId,
+        email: payload.email,
+        role: payload.role
+    }
+
+    // if(!payload){
+    //     throw invalidTokenError;
+    // }
+}
 export function generateOTP(): string {
     return crypto.randomInt(100000, 999999).toString();
 }

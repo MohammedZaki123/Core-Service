@@ -13,7 +13,7 @@ Request
 }
 201 SUCCESS
 {
-"message": "Registered successfully",
+"message": "Regifastered successfully",
 "accessToken": "jwt",
 "refreshToken": "jwt",
 "user": {
@@ -118,11 +118,16 @@ GET /customer/addresses?page=1&limit=10
 Auth: ✅
 200 SUCCESS
 {
-"data": [
+"data": [   
 {
 "id": 1,
 "label": "Home",
-"addressText": "Street 1",
+"type": "home",
+"country": "Egypt",
+"city": "Cairo",
+"street": "Tahrir Street",
+"building": "15",
+"apartmentNumber": "4B",
 "lat": 30.1,
 "lng": 31.2,
 "isDefault": true
@@ -141,7 +146,12 @@ Auth: ✅
 Request
 {
 "label": "Home",
-"addressText": "Street 1",
+"type": "home",
+"country": "Egypt",
+"city": "Cairo",
+"street": "Tahrir Street",
+"building": "15",
+"apartmentNumber": "4B",
 "lat": 30.1,
 "lng": 31.2,
 "isDefault": false
@@ -152,7 +162,12 @@ Request
 "address": {
 "id": 1,
 "label": "Home",
-"addressText": "Street 1",
+"type": "home",
+"country": "Egypt",
+"city": "Cairo",
+"street": "Tahrir Street",
+"building": "15",
+"apartmentNumber": "4B",
 "lat": 30.1,
 "lng": 31.2,
 "isDefault": false
@@ -164,7 +179,12 @@ Auth: ✅
 Request
 {
 "label": "Work",
-"addressText": "New Street",
+"type": "office",
+"country": "Egypt",
+"city": "Cairo",
+"street": "Nasr City Main Road",
+"building": "Tower 3",
+"apartmentNumber": "12th Floor",
 "lat": 30.2,
 "lng": 31.3
 }
@@ -174,7 +194,12 @@ Request
 "address": {
 "id": 1,
 "label": "Work",
-"addressText": "New Street",
+"type": "office",
+"country": "Egypt",
+"city": "Cairo",
+"street": "Nasr City Main Road",
+"building": "Tower 3",
+"apartmentNumber": "12th Floor",
 "lat": 30.2,
 "lng": 31.3,
 "isDefault": false

@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.db = void 0;
 exports.pingDB = pingDB;
 const knex_1 = __importDefault(require("knex"));
-const knexfile_1 = __importDefault(require("./knexfile"));
-exports.db = (0, knex_1.default)(knexfile_1.default);
+const knexfile_js_1 = __importDefault(require("./knexfile.js"));
+exports.db = (0, knex_1.default)(knexfile_js_1.default);
 async function pingDB() {
     await exports.db.raw('SELECT 1');
 }

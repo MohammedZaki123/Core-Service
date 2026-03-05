@@ -8,10 +8,11 @@ async function up(knex) {
             id SERIAL PRIMARY KEY,
             email TEXT NOT NULL UNIQUE,
             phone TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
             password_hash TEXT NOT NULL,
             system_role TEXT NOT NULL CHECK (system_role IN ('system_admin', 'customer', 'restaurant_user', 'delivery_agent')),
-            created_at TIMESTAMP ,
-            updated_at TIMESTAMP ,
+            created_at TIMESTAMP NOT NULL,
+            updated_at TIMESTAMP NOT NULL,
             deleted_at TIMESTAMP
          );
          CREATE INDEX idx_users_email ON users(email);

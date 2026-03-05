@@ -1,7 +1,21 @@
-import {createUser, findUserExistsByEmailOrPhone, getUserByEmail} from "../../user/repository/user.repository";
-import {createPasswordResetRequest, consumePasswordResetRequest, getLatestPasswordResetRequestByEmail} from "../repository/password-reset.repo";
-import {forgetPasswordDto, LoginDto, RegisterDto} from "../dto/auth.dto";
-import {CannotSignupAsSystemAdmin, InvalidEmailOrPasswordError, UserAlreadyExistsError} from "../errors";
+import {
+    createUser,
+    findUserExistsByEmailOrPhone,
+    getUserByEmail,
+    updateUserPassword
+} from "../../user/repository/user.repository";
+import {
+    createPasswordResetRequest, consumePasswordResetRequest,
+    getLatestPasswordResetRequestById
+} from "../repository/password-reset.repo";
+import {forgetPasswordDto, LoginDto, refreshDTO, RegisterDto, resetPasswordDto} from "../dto/auth.dto";
+import {
+    CannotSignupAsSystemAdmin,
+    InvalidEmailOrPasswordError,
+    resetPasswordFailedError,
+    UserAlreadyExistsError,
+    invalidTokenError
+} from "../errors";
 import {
     hashPassword,
     createAccessToken,
@@ -9,7 +23,7 @@ import {
     createRefreshToken,
     comparePassword,
     generateOTP,
-    hashOTP
+    hashOTP, compareOTP, verifyRefreshToken
 } from "../utils";
 import {SystemRole} from "../../user/enums";
 
@@ -99,19 +113,19 @@ export class AuthService {
     }
 
     forgetPassword = async (data: forgetPasswordDto) => {
-    // 1. check if user exists by email
-    // 2. if not exists throw an error
-    // 3. generate a 6 digit OTP
-    // 4. hash the OTP
-    // 5. Create password reset request and added to the database with expiry time and id
+        // 1. check if user exists by email
+        // 2. if not exists throw an error
+        // 3. generate a 6 digit OTP
+        // 4. hash the OTP
+        // 5. Create password reset request and added to the database with expiry time and id
         // from output of user table
-    // 6. Send OTP to user email
+        // 6. Send OTP to user email
         const user = await getUserByEmail(data.email);
-        if(!user) {
+        if (!user) {
             return;
         }
         const otp = generateOTP();
-        const hashedOTP =  hashOTP(otp);
+        const hashedOTP = hashOTP(otp);
         await createPasswordResetRequest({
             userId: user.id,
             otpHash: hashedOTP,
@@ -122,9 +136,46 @@ export class AuthService {
         console.log(`mocked email sent ${otp}`);
     }
 
-    resetPassword = async (otp: string, newPassword: string) => {
+    resetPassword = async (data: resetPasswordDto) => {
+        // 0. Get user record using email from input
+        // 1. get latest password reset request for user email
+        // 2. if no request found or request is expired throw an error
+        // 3. compare input OTP with stored OTP hash
+        // 4. if OTP does not match throw an error
+        // 5. hash new password
+        // 6. update user password with new hash
+        // 7. mark the password reset request as consumed
 
+        const user = await getUserByEmail(data.email);
+        if (!user) {
+            return;
+        }
+        const latestResetRequest = await getLatestPasswordResetRequestById(user.id);
+        if (!latestResetRequest || latestResetRequest.is_expired()) {
+            throw resetPasswordFailedError;
+        }
+        const isOTPValid = compareOTP(data.otp, latestResetRequest.otpHash);
+        if (!isOTPValid) {
+            throw resetPasswordFailedError;
+        }
+        const hashedPassword = await hashPassword(data.newPassword);
+        await updateUserPassword(user.id, hashedPassword);
+        await consumePasswordResetRequest(latestResetRequest.id);
     }
-}
+
+    refreshToken = async (data: refreshDTO)=> {
+//         verify input refresh token if its expired or invalid throw error
+    // if valid create new access token and return
+    const payload: JwtPayload = verifyRefreshToken(data.refreshToken);
+    if(!payload){
+        throw invalidTokenError;
+     }
+    const newAccessToken = createAccessToken(payload);
+
+    return {
+        newAccessToken,
+    }
+  }
+   }
 
 export const authService = new AuthService();

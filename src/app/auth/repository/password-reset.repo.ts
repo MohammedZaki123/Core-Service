@@ -25,7 +25,7 @@ export async function createPasswordResetRequest(reset: Partial<passwordReset>):
     return toEntity(record[0]);
 }
 
-export async function getLatestPasswordResetRequestByEmail(userId: number): Promise<passwordReset | undefined> {
+export async function getLatestPasswordResetRequestById(userId: number): Promise<passwordReset | undefined> {
     const record = await db.select(PASSWORD_RESET_COLUMNS).from('password_resets').where(
         'user_id', userId
     ).andWhere('consumed_at', null).orderBy('created_at', 'desc').first();

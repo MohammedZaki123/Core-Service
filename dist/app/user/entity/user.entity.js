@@ -5,6 +5,7 @@ class User {
     id;
     email;
     phone;
+    name;
     passwordHash;
     systemRole;
     createdAt;
@@ -14,6 +15,7 @@ class User {
         this.id = data.id;
         this.email = data.email;
         this.phone = data.phone;
+        this.name = data.name;
         this.passwordHash = data.passwordHash;
         this.systemRole = data.systemRole;
         this.createdAt = data.createdAt;

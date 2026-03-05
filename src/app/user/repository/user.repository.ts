@@ -18,6 +18,15 @@ const USER_COLUMNS = [
     "id","email","phone","name","password_hash","system_role","created_at","updated_at","deleted_at"
 ]
 
+
+export async function getUserById(id: number): Promise<User | undefined> {
+    const record =
+        await db.select(USER_COLUMNS).from('users').where(
+            'id', id
+        ).andWhere('deleted_at', null).first();
+
+    return record? toEntity(record) : undefined;
+}
 // for Login operation
 export async function getUserByEmail(email: string): Promise<User | undefined> {
     const record =
@@ -49,3 +58,23 @@ export async function createUser(user: Partial<User>): Promise<User> {
     ).returning( USER_COLUMNS);
     return toEntity(record[0]);
 }
+
+export async function updateUserPassword(userId: number, newPasswordHash: string): Promise<void> {
+    await db("users").where('id', userId).update({
+        password_hash: newPasswordHash,
+    });
+}
+
+export async function updateUser(userId: number, user: Partial<User>): Promise<User> {
+  // Build update object only with provided attributes
+  const updateData: any = {};
+
+  if (user.phone !== undefined) updateData.phone = user.phone;
+  if (user.name !== undefined) updateData.name = user.name;
+  const record = await db("users").
+  where('id', userId).andWhere('deleted_at', null).
+  update(updateData).
+  returning(USER_COLUMNS);
+  return toEntity(record[0]);
+}
+
