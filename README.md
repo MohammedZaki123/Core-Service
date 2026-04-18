@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Core Service** is the backbone API for the Quick-Bite food ordering and delivery platform, built with **Node.js**, **Express**, and **TypeScript**. It provides comprehensive REST endpoints for managing restaurants, branches, products, users, orders, and authentication, following a clean, layered architecture pattern with Dependency Injection.
+The **Core Service** is the backbone API for the Quick-Bite food ordering and delivery platform, built with **Node.js**, **Express**, and **TypeScript**. It provides comprehensive REST endpoints for managing restaurants, branches, products, users, orders, and authentication, following a clean, layered architecture pattern with Dependency Injection. It is the first out of three services of QuickBite Platform which are (Core, Order and Payment, Analytics)
 
 ## Key Features
 
