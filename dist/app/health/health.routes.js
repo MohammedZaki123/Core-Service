@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.healthRouter = void 0;
 const express_1 = require("express");
-const knex_js_1 = require("../../common/knex/knex.js");
+const knex_js_1 = require("../../lib/knex/knex.js");
 exports.healthRouter = (0, express_1.Router)();
 exports.healthRouter.get('/', async (req, res) => {
     try {

@@ -14,7 +14,7 @@ routes.use("/health",healthRouter);
 
 routes.use("/auth", authRouter);
 
-routes.use("/users", userRouter);
+routes.use("/user", userRouter);
 
 routes.use("/customer/addresses", addressRouter);
 
