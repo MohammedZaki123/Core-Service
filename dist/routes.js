@@ -13,7 +13,7 @@ const routes_7 = require("./app/rbac/routes");
 exports.routes = (0, express_1.Router)();
 exports.routes.use("/health", health_routes_1.healthRouter);
 exports.routes.use("/auth", routes_1.authRouter);
-exports.routes.use("/users", routes_2.userRouter);
+exports.routes.use("/user", routes_2.userRouter);
 exports.routes.use("/customer/addresses", routes_3.addressRouter);
 exports.routes.use("/restaurant", routes_4.restaurantRouter);
 exports.routes.use("/", routes_5.branchRouter);
