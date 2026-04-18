@@ -1838,7 +1838,7 @@ API-Version: 1.0.0
 
 ## Change Log
 
-### Version 1.0.0 (April 11, 2026)
+### Version 1.0.0
 
 #### Added
 - Authentication system (register, login, refresh, password reset)
@@ -1866,23 +1866,6 @@ API-Version: 1.0.0
 - XSS prevention via HTTP-only cookies
 - Input validation on all endpoints
 
-### Version 1.1.0 (Planned - July 2026)
-
-#### Planned Features
-- Advanced filtering and sorting
-- Rate limiting
-- API documentation (Swagger/OpenAPI)
-- Webhook support
-- Advanced search capabilities
-- Batch operations
-- File upload support
-
-### Version 2.0.0 (Planned - Q4 2026)
-
-#### Breaking Changes (Planned)
-- Response envelope changes
-- Pagination structure updates
-- Authentication method enhancement
 
 ---
 
