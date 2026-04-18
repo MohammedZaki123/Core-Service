@@ -1,8 +1,12 @@
-import {healthRouter} from "./app/health/health.routes.js";
+import {healthRouter} from "./app/health/health.routes";
 import {Router} from "express";
-import {authRouter} from "./app/auth/routes.js";
-import {userRouter} from "./app/user/routes.js";
-import {addressRouter} from "./app/address/routes.js";
+import {authRouter} from "./app/auth/routes";
+import {userRouter} from "./app/user/routes";
+import {addressRouter} from "./app/customer address/routes";
+import {restaurantRouter} from "./app/restaurant/routes";
+import {branchRouter} from "./app/branch/routes";
+import {productRouter} from "./app/product/routes";
+import {rbacRouter} from "./app/rbac/routes";
 
 export const routes = Router();
 
@@ -12,4 +16,12 @@ routes.use("/auth", authRouter);
 
 routes.use("/users", userRouter);
 
-routes.use("/customer", addressRouter)
+routes.use("/customer/addresses", addressRouter);
+
+routes.use("/restaurant", restaurantRouter);
+
+routes.use("/", branchRouter);
+
+routes.use('/', productRouter);
+
+routes.use('/', rbacRouter);
