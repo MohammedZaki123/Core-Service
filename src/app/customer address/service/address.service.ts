@@ -5,6 +5,7 @@ import {
 import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto.js";
 import {CustomerAddress} from "../entity/address.entity.js";
 import {AddressDoesNotExist} from "../errors";
+import {injectable} from "tsyringe";
 
 function toResponse(address: any) {
     return {
@@ -22,7 +23,8 @@ function toResponse(address: any) {
     };
 }
 
-export class CustomerAddressesService {
+@injectable()
+export class CustomerAddressService {
     getCustomerAddresses = async (userId: number) => {
     //     calling getAddressesByUserId to fetch addresses from the database
     //     return every property of user object except userID and created_at
@@ -31,7 +33,7 @@ export class CustomerAddressesService {
     }
 
     addCustomerAddress = async (userId: number, data: addCustomerAddressDto) =>{
-    //   calling addCustomerAddress to add new address to the database
+    //   calling addCustomerAddress to add new customer address to the database
         if(data.isDefault){
             await clearDefaultByUserId(userId);
         }
@@ -43,7 +45,7 @@ export class CustomerAddressesService {
         return toResponse(address);
     }
     updateCustomerAddress = async (userId: number, addressId: number ,data: editCustomerAddressesDTO)=>{
-        // Check if customer is authorized to access address
+        // Check if customer is authorized to access customer address
         const is_exist = await findAddressByCustomerID(userId, addressId);
 
         // If not authorized throw a forbidden error
@@ -62,7 +64,7 @@ export class CustomerAddressesService {
     }
 
     deleteCustomerAddress = async (userId: number, addressId: number) => {
-        // Check if customer is authorized to access address
+        // Check if customer is authorized to access customer address
         const is_exist = await findAddressByCustomerID(userId, addressId);
 
         // If not authorized throw a forbidden error
@@ -76,5 +78,4 @@ export class CustomerAddressesService {
 
 }
 
-export const customerAddressesService = new CustomerAddressesService();
 

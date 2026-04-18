@@ -9,9 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshDTO = exports.resetPasswordDto = exports.forgetPasswordDto = exports.LoginDto = exports.RegisterDto = void 0;
+exports.ResetPasswordDto = exports.ForgetPasswordDto = exports.LoginDto = exports.RegisterRestaurantDTO = exports.RegisterDto = void 0;
 const enums_1 = require("../../user/enums");
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 class RegisterDto {
     email;
     phone;
@@ -19,6 +20,7 @@ class RegisterDto {
     password;
     // checks that input role is a member of the SystemRole enum, which includes 'customer', 'restaurant_user', and 'delivery_agent'
     role;
+    restaurant;
 }
 exports.RegisterDto = RegisterDto;
 __decorate([
@@ -53,6 +55,33 @@ __decorate([
     ,
     __metadata("design:type", String)
 ], RegisterDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => RegisterRestaurantDTO),
+    __metadata("design:type", RegisterRestaurantDTO)
+], RegisterDto.prototype, "restaurant", void 0);
+class RegisterRestaurantDTO {
+    name;
+    primaryCountry;
+    logoURL;
+}
+exports.RegisterRestaurantDTO = RegisterRestaurantDTO;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    __metadata("design:type", String)
+], RegisterRestaurantDTO.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    __metadata("design:type", String)
+], RegisterRestaurantDTO.prototype, "primaryCountry", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RegisterRestaurantDTO.prototype, "logoURL", void 0);
 class LoginDto {
     email;
     password;
@@ -67,29 +96,29 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
-class forgetPasswordDto {
+class ForgetPasswordDto {
     email;
 }
-exports.forgetPasswordDto = forgetPasswordDto;
+exports.ForgetPasswordDto = ForgetPasswordDto;
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], forgetPasswordDto.prototype, "email", void 0);
-class resetPasswordDto {
+], ForgetPasswordDto.prototype, "email", void 0);
+class ResetPasswordDto {
     email;
     otp;
     newPassword;
 }
-exports.resetPasswordDto = resetPasswordDto;
+exports.ResetPasswordDto = ResetPasswordDto;
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], resetPasswordDto.prototype, "email", void 0);
+], ResetPasswordDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Length)(6),
     __metadata("design:type", String)
-], resetPasswordDto.prototype, "otp", void 0);
+], ResetPasswordDto.prototype, "otp", void 0);
 __decorate([
     (0, class_validator_1.IsStrongPassword)({
         minLength: 8,
@@ -101,13 +130,4 @@ __decorate([
         message: 'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one symbol.',
     }),
     __metadata("design:type", String)
-], resetPasswordDto.prototype, "newPassword", void 0);
-class refreshDTO {
-    refreshToken;
-}
-exports.refreshDTO = refreshDTO;
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], refreshDTO.prototype, "refreshToken", void 0);
+], ResetPasswordDto.prototype, "newPassword", void 0);

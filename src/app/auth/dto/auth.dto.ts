@@ -1,5 +1,16 @@
 import {SystemRole} from "../../user/enums";
-import {IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword, Length, MaxLength, MinLength} from "class-validator";
+import {
+    IsEmail,
+    IsEnum,
+    IsNotEmpty, IsOptional,
+    IsPhoneNumber,
+    IsString,
+    IsStrongPassword,
+    Length,
+    MaxLength,
+    MinLength, ValidateNested
+} from "class-validator";
+import {Type} from "class-transformer";
 
 
 export class RegisterDto {
@@ -29,7 +40,27 @@ export class RegisterDto {
 
     @IsEnum(SystemRole)
     // checks that input role is a member of the SystemRole enum, which includes 'customer', 'restaurant_user', and 'delivery_agent'
-    role!: SystemRole
+    role!: SystemRole;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => RegisterRestaurantDTO)
+    restaurant?: RegisterRestaurantDTO;
+}
+
+export class RegisterRestaurantDTO {
+    @IsString()
+    @MinLength(1)
+    name! : string;
+
+
+    @IsString()
+    @MinLength(1)
+    primaryCountry! : string;
+
+    @IsOptional()
+    @IsString()
+    logoURL? : string;
 }
 
 export class LoginDto {
@@ -41,12 +72,12 @@ export class LoginDto {
     password!: string;
 }
 
-export class forgetPasswordDto {
+export class ForgetPasswordDto {
     @IsEmail()
     email!: string;
 }
 
-export class resetPasswordDto {
+export class ResetPasswordDto {
     @IsEmail()
     email!: string;
 
@@ -66,8 +97,5 @@ export class resetPasswordDto {
     newPassword!: string;
 }
 
-export class refreshDTO{
-    @IsString()
-    @IsNotEmpty()
-    refreshToken!: string;
-}
+
+

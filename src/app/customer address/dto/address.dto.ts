@@ -11,7 +11,7 @@ import {
     MinLength, IsNumber
 } from "class-validator";
 import {AddressType} from "../enums";
-import {IsValidLongitude, IsValidLatitude} from "../../../common/validation/validate";
+import {IsValidLongitude, IsValidLatitude} from "../../../lib/validation/validate";
 
 /**
  * Custom validator that ensures lat and lng are required if any location-related field is provided

@@ -1,9 +1,14 @@
 import { Request, Response , NextFunction} from "express";
-import {CustomerAddressesService, customerAddressesService} from "../service/address.service.js";
-import {validateBody, validatePathParameter} from "../../../common/validation/validate.js";
+import {CustomerAddressService} from "../service/address.service.js";
+import {validateBody, validatePathParameter} from "../../../lib/validation/validate.js";
 import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto.js";
-export class CustomerAddressesController {
-    constructor(private readonly customerAddressesService: CustomerAddressesService) {
+import {injectable, inject} from "tsyringe";
+import {TOKENS} from "../../../lib/di/tokens.js";
+import {sendSuccess} from "../../../lib/http/response.js";
+
+@injectable()
+export class CustomerAddressController {
+    constructor(@inject(TOKENS.CustomerAddressService) private readonly customerAddressesService: CustomerAddressService) {
 
     }
     getCustomerAddresses = async (req: Request, res: Response, next: NextFunction) => {
@@ -12,8 +17,8 @@ export class CustomerAddressesController {
     //     add function returned data to response and send with 200 status code
         try{
             const userId = req.user?.userId!;
-            const addresses = await customerAddressesService.getCustomerAddresses(userId);
-            res.status(200).json(addresses);
+            const addresses = await this.customerAddressesService.getCustomerAddresses(userId);
+            sendSuccess(res, addresses);
         }catch(error){
             next();
         }
@@ -26,11 +31,11 @@ export class CustomerAddressesController {
         try{
             const userId = req.user?.userId!;
             const validatedData = await validateBody(addCustomerAddressDto, req.body);
-            const user = await customerAddressesService.addCustomerAddress(userId, validatedData);
-            res.status(201).json({
+            const user = await this.customerAddressesService.addCustomerAddress(userId, validatedData);
+            sendSuccess(res, {
                 message: "Address added successfully",
                 address: user
-            });
+            }, 201);
         }catch(error){
             next();
         }
@@ -38,7 +43,7 @@ export class CustomerAddressesController {
 
     editCustomerAddress = async (req: Request, res: Response, next: NextFunction)=>{
         try{
-            // 1. Extract and validate address ID from path parameter
+            // 1. Extract and validate customer address ID from path parameter
             const addressId = validatePathParameter(req.params.id, "Address ID");
 
             // 2. Validate request body input and return cleaned data
@@ -53,7 +58,7 @@ export class CustomerAddressesController {
             );
 
             // 4. Return response
-            res.status(200).json({
+            sendSuccess(res, {
                 message: "Address updated successfully",
                 address: result
             });
@@ -64,7 +69,7 @@ export class CustomerAddressesController {
 
     deleteCustomerAddress = async (req: Request, res: Response, next: NextFunction) => {
         try{
-            // 1. Extract and validate address ID from path parameter
+            // 1. Extract and validate customer address ID from path parameter
             const addressId = validatePathParameter(req.params.id, "Address ID");
 
             // 2. Get user ID from authenticated token
@@ -74,7 +79,7 @@ export class CustomerAddressesController {
             await this.customerAddressesService.deleteCustomerAddress(userId, addressId);
 
             // 4. Return 204 No Content (standard for successful deletion)
-            res.status(204).json({message : "Address deleted"});
+            sendSuccess(res, {message : "Address deleted"});
         }catch(error){
             next(error);
         }
@@ -82,5 +87,4 @@ export class CustomerAddressesController {
 
 }
 
-export const customerAddressesController = new CustomerAddressesController(customerAddressesService);
 

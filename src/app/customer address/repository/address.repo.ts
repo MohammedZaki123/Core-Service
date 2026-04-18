@@ -1,4 +1,4 @@
-import {db} from "../../../common/knex/knex";
+import {db} from "../../../lib/knex/knex";
 import {CustomerAddress} from "../entity/address.entity";
 
 function toEntity(record: any): CustomerAddress {
