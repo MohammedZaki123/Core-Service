@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 const express_1 = require("express");
-const user_controller_1 = require("./controller/user.controller");
-const guard_1 = require("../../common/auth/guard");
+const guard_1 = require("../../lib/auth/guard");
+const container_1 = require("../../lib/di/container");
+const tokens_1 = require("../../lib/di/tokens");
+const idempotency_1 = require("../../lib/idempotency/idempotency");
 exports.userRouter = (0, express_1.Router)();
-exports.userRouter.get('/me', guard_1.authenticate, user_controller_1.userController.getUserInfo);
-exports.userRouter.patch('/me', guard_1.authenticate, user_controller_1.userController.editUserInfo);
+const userController = container_1.container.resolve(tokens_1.TOKENS.UserController);
+exports.userRouter.get('/me', guard_1.authenticate, userController.getUserInfo);
+exports.userRouter.patch('/me', guard_1.authenticate, (0, idempotency_1.idempotency)({ strict: false }), userController.editUserInfo);

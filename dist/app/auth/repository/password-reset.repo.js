@@ -4,7 +4,7 @@ exports.createPasswordResetRequest = createPasswordResetRequest;
 exports.getLatestPasswordResetRequestById = getLatestPasswordResetRequestById;
 exports.consumePasswordResetRequest = consumePasswordResetRequest;
 const password_reset_entity_1 = require("../entity/password_reset.entity");
-const knex_1 = require("../../../common/knex/knex");
+const knex_1 = require("../../../lib/knex/knex");
 function toEntity(record) {
     return new password_reset_entity_1.passwordReset({
         id: record.id,
@@ -18,8 +18,9 @@ function toEntity(record) {
 const PASSWORD_RESET_COLUMNS = [
     "id", "user_id", "otp_hash", "expires_at", "created_at", "consumed_at"
 ];
-async function createPasswordResetRequest(reset) {
-    const record = await (0, knex_1.db)("password_resets").insert({
+async function createPasswordResetRequest(reset, trx) {
+    const query = trx || knex_1.db;
+    const record = await query("password_resets").insert({
         user_id: reset.userId,
         otp_hash: reset.otpHash,
         expires_at: reset.expiresAt,
