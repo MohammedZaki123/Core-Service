@@ -1,5 +1,6 @@
 import { User } from '../entity/user.entity';
-import {db} from "../../../common/knex/knex";
+import {db} from "../../../lib/knex/knex";
+import {Knex} from "knex";
 
 function toEntity(record: any): User {
     return new User({
@@ -44,8 +45,8 @@ export async function findUserExistsByEmailOrPhone(email: string, phone: string)
 
     return result.rows[0].exists;
 }
-export async function createUser(user: Partial<User>): Promise<User> {
-    const record = await db("users").insert(
+export async function createUser(user: Partial<User>, conn: Knex = db): Promise<User> {
+    const record = await conn("users").insert(
         {
             email: user.email,
             phone: user.phone,
@@ -65,16 +66,19 @@ export async function updateUserPassword(userId: number, newPasswordHash: string
     });
 }
 
-export async function updateUser(userId: number, user: Partial<User>): Promise<User> {
+export async function updateUser(userId: number, data: Partial<User>): Promise<User> {
   // Build update object only with provided attributes
-  const updateData: any = {};
 
-  if (user.phone !== undefined) updateData.phone = user.phone;
-  if (user.name !== undefined) updateData.name = user.name;
   const record = await db("users").
   where('id', userId).andWhere('deleted_at', null).
-  update(updateData).
+  update({...data,
+  updated_at: new Date()}).
   returning(USER_COLUMNS);
   return toEntity(record[0]);
 }
+
+// export async function deleteUser(userId: number, trx?: Knex.Transaction) {
+//     const query = trx || db;
+//     await query("users").del().where('id',userId);
+// }
 

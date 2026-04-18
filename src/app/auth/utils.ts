@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import {env} from "../../common/config/env";
+import {env} from "../../lib/config/env";
 import jwt, {SignOptions} from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -7,6 +7,10 @@ export type JwtPayload = {
     userId: number;
     email: string;
     role: string;
+    // for restaurant users only
+    restaurantId?: number;
+    restaurantRole?: string;
+    branchIds?: number[];
 }
 export  async function hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
@@ -33,13 +37,7 @@ export function createRefreshToken(payload: JwtPayload): string {
 }
 
 export function verifyAccessToken(token: string): JwtPayload {
-        const payload = jwt.verify(token, env.jwt.accessSecret) as JwtPayload;
-
-        return {
-            userId: payload.userId,
-            email: payload.email,
-            role: payload.role
-        }
+        return  jwt.verify(token, env.jwt.accessSecret) as JwtPayload;
 }
 
 export function verifyRefreshToken(token: string): JwtPayload {
@@ -48,13 +46,8 @@ export function verifyRefreshToken(token: string): JwtPayload {
     // } catch (err) {
     //     throw invalidTokenError;
     // }
-    const payload = jwt.verify(token, env.jwt.refreshSecret) as JwtPayload;
+    return jwt.verify(token, env.jwt.refreshSecret) as JwtPayload;
 
-    return {
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role
-    }
 
     // if(!payload){
     //     throw invalidTokenError;

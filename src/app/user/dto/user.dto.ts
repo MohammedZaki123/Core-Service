@@ -1,4 +1,4 @@
-import {IsString, MaxLength, MinLength, IsOptional} from "class-validator";
+import {IsString, MaxLength, MinLength, IsOptional, IsPhoneNumber} from "class-validator";
 
 export class patchUserDto {
 

@@ -13,7 +13,7 @@ exports.generateOTP = generateOTP;
 exports.hashOTP = hashOTP;
 exports.compareOTP = compareOTP;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const env_1 = require("../../common/config/env");
+const env_1 = require("../../lib/config/env");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_1 = __importDefault(require("crypto"));
 async function hashPassword(password) {
@@ -36,12 +36,7 @@ function createRefreshToken(payload) {
     return jsonwebtoken_1.default.sign(payload, env_1.env.jwt.refreshSecret, options);
 }
 function verifyAccessToken(token) {
-    const payload = jsonwebtoken_1.default.verify(token, env_1.env.jwt.accessSecret);
-    return {
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role
-    };
+    return jsonwebtoken_1.default.verify(token, env_1.env.jwt.accessSecret);
 }
 function verifyRefreshToken(token) {
     // try {
@@ -49,12 +44,7 @@ function verifyRefreshToken(token) {
     // } catch (err) {
     //     throw invalidTokenError;
     // }
-    const payload = jsonwebtoken_1.default.verify(token, env_1.env.jwt.refreshSecret);
-    return {
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role
-    };
+    return jsonwebtoken_1.default.verify(token, env_1.env.jwt.refreshSecret);
     // if(!payload){
     //     throw invalidTokenError;
     // }
