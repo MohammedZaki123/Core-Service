@@ -7,6 +7,7 @@ import {container} from "../../lib/di/container";
 import {TOKENS} from "../../lib/di/tokens";
 import {withCache} from "../../lib/cache/withCache";
 import {idempotency} from "../../lib/idempotency/idempotency";
+import {requireInternalApiKey} from "../../lib/auth/api-key";
 
 export const branchRouter = Router();
 
@@ -34,6 +35,9 @@ branchRouter.patch('/branches/:id',
     branchController.patchBranch);
 
 branchRouter.patch('/branches/:id/status', authenticate, idempotency({strict: false}), branchController.patchBranchStatus);
+
+// Internal (service-to-service)
+branchRouter.get('/internal/branches/:id', requireInternalApiKey, branchController.findByIdWithRestaurant);
 
 
 

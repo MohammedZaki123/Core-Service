@@ -8,7 +8,7 @@ import {sendSuccess} from "../../../lib/http/response.js";
 
 @injectable()
 export class CustomerAddressController {
-    constructor(@inject(TOKENS.CustomerAddressService) private readonly customerAddressesService: CustomerAddressService) {
+    constructor(@inject(TOKENS.CustomerAddressService) private readonly customerAddressService: CustomerAddressService) {
 
     }
     getCustomerAddresses = async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +17,7 @@ export class CustomerAddressController {
     //     add function returned data to response and send with 200 status code
         try{
             const userId = req.user?.userId!;
-            const addresses = await this.customerAddressesService.getCustomerAddresses(userId);
+            const addresses = await this.customerAddressService.getCustomerAddresses(userId);
             sendSuccess(res, addresses);
         }catch(error){
             next();
@@ -31,7 +31,7 @@ export class CustomerAddressController {
         try{
             const userId = req.user?.userId!;
             const validatedData = await validateBody(addCustomerAddressDto, req.body);
-            const user = await this.customerAddressesService.addCustomerAddress(userId, validatedData);
+            const user = await this.customerAddressService.addCustomerAddress(userId, validatedData);
             sendSuccess(res, {
                 message: "Address added successfully",
                 address: user
@@ -51,7 +51,7 @@ export class CustomerAddressController {
             const validatedData = await validateBody(editCustomerAddressesDTO, req.body);
 
             // 3. Call update function of service layer
-            const result = await this.customerAddressesService.updateCustomerAddress(
+            const result = await this.customerAddressService.updateCustomerAddress(
                 userId,
                 addressId,
                 validatedData
@@ -76,7 +76,7 @@ export class CustomerAddressController {
             const userId = req.user?.userId!;
 
             // 3. Call delete function of service layer
-            await this.customerAddressesService.deleteCustomerAddress(userId, addressId);
+            await this.customerAddressService.deleteCustomerAddress(userId, addressId);
 
             // 4. Return 204 No Content (standard for successful deletion)
             sendSuccess(res, {message : "Address deleted"});
@@ -85,6 +85,14 @@ export class CustomerAddressController {
         }
     }
 
+    getById = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const address = await this.customerAddressService.getById(Number(req.params.id));
+            sendSuccess(res, address);
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 

@@ -4,7 +4,7 @@ import {RestaurantDoesNotExist} from "../errors";
 import {
     createRestaurant,
     getAllRestaurants,
-    getRestaurantById,
+    findRestaurantById,
     updatedRestaurantStatus,
     updateRestaurant
 } from "../repository/restaurant.repo";
@@ -22,6 +22,8 @@ import {buildPaginationResult, FilterParams, PaginationParams} from "../../../li
 import {TOKENS} from "../../../lib/di/tokens";
 import {CreateUserData, UserService} from "../../user/service/user.service";
 import {MemberService} from "../../rbac/service/member.service";
+import {insertOutboxEvent} from "../../../lib/events/outbox.repo";
+import {EVENT_TYPES} from "../../../lib/events/event-types";
 
 @injectable()
 export class RestaurantService {
@@ -119,7 +121,7 @@ export class RestaurantService {
    // }
 
    getRestaurant = async (addressID: number) => {
-        const restaurant = await getRestaurantById(addressID);
+        const restaurant = await findRestaurantById(addressID);
 
         if(!restaurant){
             throw RestaurantDoesNotExist
@@ -138,7 +140,7 @@ export class RestaurantService {
    //      service layer does not care about properties to be updated
    //     this was handled in DTO structural validation logic
    //     call update restaurant of repo layer
-       const result = await getRestaurantById(restaurantID);
+       const result = await findRestaurantById(restaurantID);
 
        if(!result){
            throw RestaurantDoesNotExist
@@ -168,15 +170,27 @@ export class RestaurantService {
            throw NotAuthorized
        }
 
-       const res = await getRestaurantById(restaurantID);
+       const res = await findRestaurantById(restaurantID);
        if (!res) {
            throw RestaurantDoesNotExist;
        }
-       const restaurant = await updatedRestaurantStatus(restaurantID,data);
 
-       return {
-           id: restaurant.id,
-           status: restaurant.status,
+       const trx = await db.transaction();
+       try {
+           const updated = await updatedRestaurantStatus(restaurantID, data.status, trx);
+           if (data.status === "suspended") {
+               await insertOutboxEvent(trx, {
+                   aggregateType: "restaurants",
+                   aggregateId: restaurantID,
+                   eventType: EVENT_TYPES.RESTAURANT_SUSPENDED,
+                   payload: {restaurantId: restaurantID},
+               });
+           }
+           await trx.commit();
+           return updated;
+       }catch(err){
+              await trx.rollback();
+                throw err;
        }
    }
 

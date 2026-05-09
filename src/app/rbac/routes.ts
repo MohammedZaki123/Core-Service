@@ -5,6 +5,7 @@ import {MemberController} from "./controller/member.controller";
 import {container} from "../../lib/di/container";
 import {TOKENS} from "../../lib/di/tokens";
 import {idempotency} from "../../lib/idempotency/idempotency";
+import {requireInternalApiKey} from "../../lib/auth/api-key";
 
 export const rbacRouter = Router();
 
@@ -13,6 +14,8 @@ const memberController = container.resolve<MemberController>(TOKENS.MemberContro
 rbacRouter.get('/roles/:role/permissions',
     memberController.getRolePermissions
 );
+rbacRouter.get('/internal/rbac/permissions', requireInternalApiKey, memberController.getPermissionsByRole);
+
 
 rbacRouter.post('/restaurants/:restaurantId/members',
     authenticate,

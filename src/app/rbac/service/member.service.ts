@@ -5,7 +5,7 @@ import {
     MemberNotFoundError,
     RoleNotFoundError
 } from "../errors";
-import {getRestaurantById} from "../../restaurant/repository/restaurant.repo";
+import {findRestaurantById} from "../../restaurant/repository/restaurant.repo";
 import {RestaurantDoesNotExist} from "../../restaurant/errors";
 import {createUser, findUserExistsByEmailOrPhone} from "../../user/repository/user.repo";
 import {UserAlreadyExistsError} from "../../auth/error";
@@ -66,7 +66,7 @@ export class MemberService {
             throw CannotCreateOwnerUserError;
         }
 
-        if(!await getRestaurantById(restaurantId)){
+        if(!await findRestaurantById(restaurantId)){
             throw RestaurantDoesNotExist;
         }
         const roleId = await findRoleByName(data.role);
@@ -162,7 +162,7 @@ export class MemberService {
         return member;
     }
     listMembers = async (restaurantId: number, params?: PaginationParams, filters?: FilterParams[]) => {
-        const restaurant = await getRestaurantById(restaurantId);
+        const restaurant = await findRestaurantById(restaurantId);
         if(!restaurant){
             throw RestaurantDoesNotExist
         }
@@ -263,5 +263,10 @@ export class MemberService {
             throw IncorrectBranches
         }
     }
+    async getPermissionsByRole(roleName: string) {
+        const permissions = await getPermissionsByRoleName(roleName);
+        return {role: roleName, permissions};
+    }
+
 }
 

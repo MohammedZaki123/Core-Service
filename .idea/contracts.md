@@ -5,7 +5,7 @@
 POST /auth/register
 Auth: ❌
 Request
-{
+{   
 "email": "user@email.com",
 "phone": "01000000000",
 "name": "John Doe",

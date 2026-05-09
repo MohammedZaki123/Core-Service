@@ -8,6 +8,7 @@ import {TOKENS} from "../../../lib/di/tokens";
 import {sendSuccess, sendPaginated} from "../../../lib/http/response";
 import {parseFilterQuery, parsePaginationQuery} from "../../../lib/http/pagination/parse-query";
 import {PaginationParams} from "../../../lib/http/pagination/cursor-pagination";
+import {InvalidReserveItemsError, MissingProductIdsQueryError} from "../errors";
 
 @injectable()
 export class ProductController {
@@ -79,6 +80,33 @@ export class ProductController {
             const result = await this.productService.update( productId, validatedData, req.user?.role as SystemRole, req.user?.userId!, branchId);
             sendSuccess(res, {message : "Product Updated Successfully", ...result});
         }catch(err){
+            next(err);
+        }
+    }
+
+    findByBranchAndIds = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const branchId = Number(req.params.id);
+            const raw = typeof req.query.ids === "string" ? req.query.ids : "";
+            const ids = raw.split(",").map((s) => Number(s.trim())).filter((n) => Number.isInteger(n) && n > 0);
+            if (ids.length === 0) throw MissingProductIdsQueryError;
+            const products = await this.productService.findByBranchAndIds(branchId, ids);
+            sendSuccess(res, products);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    reserveStock = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const branchId = Number(req.params.id);
+            const items = req.body?.items;
+            if (!Array.isArray(items) || items.length === 0) {
+                throw InvalidReserveItemsError;
+            }
+            const result = await this.productService.reserveStock(branchId, items);
+            sendSuccess(res, result);
+        } catch (err) {
             next(err);
         }
     }

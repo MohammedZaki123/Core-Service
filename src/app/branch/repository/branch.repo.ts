@@ -30,7 +30,7 @@ const BRANCH_COLUMNS = [
     "accept_orders", "created_at", "updated_at", "currency", "commission", "delivery_radius"
 ]
 
-export async function getBranchById(id: number){
+export async function findBranchById(id: number){
     const record = await db.select(BRANCH_COLUMNS).from("restaurant_branches").where(
         'id', id
     ).first();
@@ -111,7 +111,7 @@ export async function getBranchesByRestaurantId(restaurantID: number, params?: P
     return records.map(toEntity);
 }
 
-export async function updateBranch(branchId: number, data: Partial<Branch>){
+export async function updateBranch(branchId: number, data: Partial<Branch>, conn: Knex = db){
     const updatedPayload: any = {
         updated_at: new Date()
     };
@@ -128,12 +128,12 @@ export async function updateBranch(branchId: number, data: Partial<Branch>){
     if(data.deliveryRadius !== undefined) updatedPayload.delivery_radius = data.deliveryRadius;
 
 
-    const record = await db("restaurant_branches").where('id', branchId).update(updatedPayload).returning(BRANCH_COLUMNS);
+    const record = await conn("restaurant_branches").where('id', branchId).update(updatedPayload).returning(BRANCH_COLUMNS);
 
     return toEntity(record[0]);
 }
 
-export async function updateBranchStatus(branchId: number, data: Partial<Branch>){
+export async function updateBranchStatus(branchId: number, data: Partial<Branch>, conn: Knex = db){
     const updatedPayload: any = {
         updated_at: new Date()
     };
@@ -142,7 +142,7 @@ export async function updateBranchStatus(branchId: number, data: Partial<Branch>
     if(data.commission !== undefined) updatedPayload.commission = data.commission
     if(data.isActive !== undefined) updatedPayload.is_active = data.isActive
 
-    const record = await db('restaurant_branches').where('id', branchId).update(updatedPayload).returning(BRANCH_COLUMNS);
+    const record = await conn('restaurant_branches').where('id', branchId).update(updatedPayload).returning(BRANCH_COLUMNS);
 
     return toEntity(record[0]);
 }

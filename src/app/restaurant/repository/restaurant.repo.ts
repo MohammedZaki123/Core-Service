@@ -26,7 +26,7 @@ const RESTAURANT_COLUMNS = [
     "id", "owner_id","name", "status","created_at", "logo_url", "primary_country" , "updated_at", "status_updated_at"
 ]
 
-export async function getRestaurantById(id: number){
+export async function findRestaurantById(id: number){
    const record = await db.select(RESTAURANT_COLUMNS).from('restaurants').where(
        'id', id
    ).first();
@@ -82,10 +82,11 @@ export async function updateRestaurant(id: number, data: Partial<Restaurant>){
     return toEntity(row);
 }
 
-export async function updatedRestaurantStatus(id: number, data: Partial<Restaurant>) {
+export async function updatedRestaurantStatus(id: number, status: string, conn: Knex = db) {
+
     const now: Date = new Date()
-    const [row] = await db("restaurants").where("id", id).update({
-        status: data.status,
+    const [row] = await conn("restaurants").where("id", id).update({
+        status,
         updated_at: now,
         status_updated_at: now
     }).returning(RESTAURANT_COLUMNS);

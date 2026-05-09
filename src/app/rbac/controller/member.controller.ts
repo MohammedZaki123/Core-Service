@@ -7,6 +7,7 @@ import {TOKENS} from "../../../lib/di/tokens";
 import {sendSuccess, sendPaginated} from "../../../lib/http/response";
 import {parseFilterQuery, parsePaginationQuery} from "../../../lib/http/pagination/parse-query";
 import {PaginationParams} from "../../../lib/http/pagination/cursor-pagination";
+import {RoleQueryRequiredError} from "../errors";
 
 @injectable()
 export class MemberController {
@@ -77,5 +78,16 @@ export class MemberController {
         }
     }
 
+    getPermissionsByRole = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const role = String(req.query.role ?? "");
+            if (!role) throw RoleQueryRequiredError;
+            const result = await this.memberService.getPermissionsByRole(role);
+            sendSuccess(res, result);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 

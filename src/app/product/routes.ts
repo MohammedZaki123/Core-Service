@@ -6,6 +6,7 @@ import {container} from "../../lib/di/container";
 import {TOKENS} from "../../lib/di/tokens";
 import {idempotency} from "../../lib/idempotency/idempotency";
 import {withCache} from "../../lib/cache/withCache";
+import {requireInternalApiKey} from "../../lib/auth/api-key";
 
 export const productRouter = Router();
 
@@ -32,3 +33,6 @@ productRouter.patch('/products/:id',
     rbac({resource:"core:product", action:'update', allowSystemAdmin: true}),
     idempotency({strict: false}),
     productController.update);
+
+productRouter.get('/internal/branches/:id/products', requireInternalApiKey, productController.findByBranchAndIds);
+productRouter.post('/internal/branches/:id/reserve-stock', requireInternalApiKey, productController.reserveStock);

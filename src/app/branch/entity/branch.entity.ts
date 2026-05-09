@@ -14,6 +14,7 @@ export class Branch {
     createdAt: Date;
     updatedAt: Date;
     deliveryRadius: number;
+    deliveryFee: number;
     currency: Currency;
     commission: number;// SMALLINT
     location?: number
@@ -34,5 +35,6 @@ export class Branch {
         this.currency = data.currency!;
         this.commission = data.commission?? 0;
         this.deliveryRadius = data.deliveryRadius?? 0;
+        this.deliveryFee = data.deliveryFee?? 0;
     }
 }

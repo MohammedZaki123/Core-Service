@@ -8,6 +8,7 @@ import {TOKENS} from "../../../lib/di/tokens";
 import {sendSuccess, sendPaginated} from "../../../lib/http/response";
 import {parseFilterQuery, parsePaginationQuery} from "../../../lib/http/pagination/parse-query";
 import {PaginationParams} from "../../../lib/http/pagination/cursor-pagination";
+import {BranchNotFound} from "../errors";
 
 @injectable()
 export class BranchController {
@@ -96,5 +97,33 @@ export class BranchController {
     //     }
     // }
 
+    findByIdWithRestaurant = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = Number(req.params.id);
+            const result = await this.branchService.findByIdWithRestaurant(id);
+            if (!result) throw BranchNotFound;
+            const {branch, restaurantStatus} = result;
+            sendSuccess(res, {
+                id: branch.id,
+                // in order to compare user restaurant id in order service  with branch restaurant id
+                restaurantId: branch.restaurantId,
+                restaurantStatus,
+                region: branch.countryCode,
+                isActive: branch.isActive,
+                acceptOrders: branch.acceptOrders,
+                deliveryFee: branch.deliveryFee,
+                commissionBps: branch.commission,
+                currency: branch.currency,
+                lat: Number(branch.lat),
+                lng: Number(branch.lng),
+                name: branch.label,
+                addressText: branch.addressText,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
+
+
 

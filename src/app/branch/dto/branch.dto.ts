@@ -130,7 +130,10 @@ export class PatchBranchDTO {
     @IsEnum(Currency)
     currency?: Currency;
 
-
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    deliveryFee?: number;
 
     @IsOptional()
     @IsInt()

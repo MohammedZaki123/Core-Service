@@ -136,7 +136,7 @@ export function requireBranchAccess(paramName: string = 'branchId') {
             // Check if the branch is in the user's branchIds
             if (!req.user?.branchIds?.includes(Number(branchId))) {
                 return res.status(403).json({
-                    error: "Permission denied",
+                    error: "You do not have access to this branch",
                 });
             }
 

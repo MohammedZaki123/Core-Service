@@ -1,6 +1,6 @@
 import {AddBranchDTO, PatchBranchDTO, PatchBranchStatusDTO} from "../dto/branch.dto";
 import {
-    createBranch, findNearByBranches, getBranchById,
+    createBranch, findNearByBranches, findBranchById,
     getBranchesByRestaurantId,
     updateBranch, updateBranchStatus
 } from "../repository/branch.repo";
@@ -8,11 +8,15 @@ import {Branch} from "../entity/branch.entity";
 import {BranchNotFound, EmptyInputData} from "../errors";
 import {Currency} from "../enum";
 import {SystemRole} from "../../user/enums";
-import {getRestaurantById} from "../../restaurant/repository/restaurant.repo";
+import {findRestaurantById} from "../../restaurant/repository/restaurant.repo";
 import {NotAuthorized} from "../../../lib/auth/errors";
 import {RestaurantDoesNotExist} from "../../restaurant/errors";
 import {injectable} from "tsyringe";
 import {buildPaginationResult, FilterParams, PaginationParams} from "../../../lib/http/pagination/cursor-pagination";
+import {BranchWithRestaurant} from "../types";
+import {db} from "../../../lib/knex/knex";
+import {insertOutboxEvent} from "../../../lib/events/outbox.repo";
+import {EVENT_TYPES} from "../../../lib/events/event-types";
 
 
 @injectable()
@@ -29,7 +33,7 @@ export class BranchService {
     //     call repo layer create branch function giving data as an input
     //     return branch object attributes except restaurantID , createdAt, updatedAt
     //     TODO: we need also to check the role of user if it is an admin or the owner of the restaurant based on restaurant ID
-        const restaurant = await getRestaurantById(restaurantID);
+        const restaurant = await findRestaurantById(restaurantID);
         if(role != SystemRole.SYSTEM_ADMIN && (Number(restaurant?.ownerId!) !== Number(userId))){
             throw NotAuthorized;
         }
@@ -60,12 +64,12 @@ export class BranchService {
     //  check if branch exist and check if restaurant exist
     //  checking the role of user in the system (owner of the restaurant in which branch belongs to and system admin allowed only)
     //  return call repository layer updatedBranch function
-        const branch = await getBranchById(branchId);
+        const branch = await findBranchById(branchId);
         if(!branch){
             throw BranchNotFound;
         }
 
-        const restaurant = await getRestaurantById(branch.restaurantId);
+        const restaurant = await findRestaurantById(branch.restaurantId);
 
         if(!restaurant){
             throw RestaurantDoesNotExist;
@@ -75,7 +79,21 @@ export class BranchService {
             throw NotAuthorized;
         }
 
-    return await updateBranch(branchId, data);
+        const trx = await db.transaction();
+        try{
+            const updated = await updateBranch(branchId, data, trx);
+            await insertOutboxEvent(trx, {
+                aggregateType: "restaurant_branches",
+                aggregateId: branchId,
+                eventType: EVENT_TYPES.BRANCH_UPDATED,
+                payload: {branchId},
+            });
+            await trx.commit();
+            return updated;
+        }catch(error){
+            await trx.rollback();
+            throw error;
+        }
     }
 
     editBranchStatus = async (branchId: number , role: SystemRole,data: PatchBranchStatusDTO) => {
@@ -83,14 +101,30 @@ export class BranchService {
     //      check if branch exist using branchId
     //      only system admin can change the branch isActive status
     //      call repository layer function updateBranch
-        const branch = await getBranchById(branchId);
+        const branch = await findBranchById(branchId);
         if(!branch){
             throw BranchNotFound;
         }
         if(role !== SystemRole.SYSTEM_ADMIN){
             throw NotAuthorized;
         }
-        return await updateBranchStatus(branchId, data);
+        const trx = await db.transaction();
+        try{
+            const updated = await updateBranchStatus(branchId, data, trx);
+            const eventType = data.isActive === false
+                ? EVENT_TYPES.BRANCH_DEACTIVATED
+                : EVENT_TYPES.BRANCH_UPDATED;
+            await insertOutboxEvent(trx, {
+                aggregateType: "restaurant_branches",
+                aggregateId: branchId,
+                eventType,
+                payload: {branchId},
+            });
+            await trx.commit();
+            return updated;
+        }catch(error){
+            throw error;
+        }
     }
 
     // editBranchRadius = async (branchId: number , data: PutBranchDTO) => {
@@ -140,4 +174,12 @@ export class BranchService {
         }
         return filteredBranches
     }
+
+    findByIdWithRestaurant = async (branchId: number): Promise<BranchWithRestaurant | null> => {
+        const branch = await findBranchById(branchId);
+        if (!branch) return null;
+        const restaurant = await findRestaurantById(branch.restaurantId);
+        return {branch, restaurantStatus: restaurant?.status ?? "unknown"};
+    }
+
 }

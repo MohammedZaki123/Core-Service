@@ -92,5 +92,15 @@ export async function clearDefaultByUserId(userId: number): Promise<void> {
         .update({is_default: false});
 }
 
+export async function findAddressById(id: number): Promise<CustomerAddress | undefined> {
+    const row = await db("customer_addresses")
+        .select(ADDRESS_COLUMNS)
+        .where("id", id)
+        .first();
+
+    return row ? toEntity(row) : undefined;
+}
+
+
 
 

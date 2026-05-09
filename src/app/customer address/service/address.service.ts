@@ -1,9 +1,10 @@
 import {
     createAddress, findAddressByCustomerID, getAddressesByUserId, updateAddress, deleteAddress,
-    clearDefaultByUserId
+    clearDefaultByUserId, findAddressById
 } from "../repository/address.repo.js";
 import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto.js";
 import {CustomerAddress} from "../entity/address.entity.js";
+
 import {AddressDoesNotExist} from "../errors";
 import {injectable} from "tsyringe";
 
@@ -30,6 +31,23 @@ export class CustomerAddressService {
     //     return every property of user object except userID and created_at
         const addresses = await getAddressesByUserId(userId);
         return addresses.map(toResponse);
+    }
+
+    getById = async (id: number) => {
+        const address = await findAddressById(id);
+        if (!address) throw AddressDoesNotExist;
+        return {
+            id: address.id,
+            userId: address.userId,
+            label: address.label,
+            country: address.country,
+            city: address.city,
+            street: address.street,
+            building: address.building,
+            apartmentNumber: address.apartmentNumber,
+            lat: address.lat,
+            lng: address.lng,
+        };
     }
 
     addCustomerAddress = async (userId: number, data: addCustomerAddressDto) =>{
