@@ -44,7 +44,7 @@ import {CreateUserData, UserService} from "../../user/service/user.service";
 import {MemberService} from "../../rbac/service/member.service";
 import {inject, injectable} from "tsyringe";
 import {TOKENS} from "../../../lib/di/tokens";
-import {IEmailProvider} from "../../../pkg/email/email.interface";
+import type {IEmailProvider} from "../../../pkg/email/email.interface";
 import {passwordResetEmail} from "../templates/password-reset";
 import {UserNotFoundError} from "../../user/errors";
 
@@ -202,9 +202,8 @@ export class AuthService {
             expiresAt: new Date(Date.now() + 10 * 60 * 1000), // expires in 15 minutes
             createdAt: new Date(),
         });
-        // TODO: send OTP to user email
-        // const email = passwordResetEmail(otp);
-        // await this.emailService.send(data.email, email.subject, email.html);
+        const email = passwordResetEmail(otp);
+        await this.emailService.send(data.email, email.subject, email.html);
         console.log(otp)
     }
 

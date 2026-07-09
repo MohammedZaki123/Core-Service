@@ -27,6 +27,7 @@ The **Core Service** is the backbone API for the Quick-Bite food ordering and de
 - **Validation**: class-validator and class-transformer
 - **Security**: bcrypt, helmet, CORS
 
+
 ## Project Structure
 
 ```

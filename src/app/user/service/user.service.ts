@@ -72,5 +72,15 @@ export class UserService {
     // deleteUser = async (userId: number, trx?: Knex.Transaction) => {
     //     await deleteUser(userId, trx);
     // }
+
+    getAgentById = async (id: number) => {
+        const user = await getUserById(id);
+        if (!user) throw UserNotFoundError;
+        if (user.systemRole !== SystemRole.DELIVERY_AGENT) {
+            // Use UserNotFoundError to avoid enumeration of other user types.
+            throw UserNotFoundError;
+        }
+        return {id: user.id, name: user.name, phone: user.phone};
+    }
 }
 

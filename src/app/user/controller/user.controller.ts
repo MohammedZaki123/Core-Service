@@ -41,6 +41,16 @@ export class UserController {
             next(err);
         }
     }
+
+    getAgentById = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const agentId = Number(req.params.id);
+            const agent = await this.userService.getAgentById(agentId);
+            sendSuccess(res, {agent});
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 

@@ -12,6 +12,21 @@ import {
 } from "class-validator";
 import {Type} from "class-transformer";
 
+export class RegisterRestaurantDTO {
+    @IsString()
+    @MinLength(1)
+    name! : string;
+
+
+    @IsString()
+    @MinLength(1)
+    primaryCountry! : string;
+
+    @IsOptional()
+    @IsString()
+    logoURL? : string;
+}
+
 
 export class RegisterDto {
     @IsEmail()
@@ -48,20 +63,6 @@ export class RegisterDto {
     restaurant?: RegisterRestaurantDTO;
 }
 
-export class RegisterRestaurantDTO {
-    @IsString()
-    @MinLength(1)
-    name! : string;
-
-
-    @IsString()
-    @MinLength(1)
-    primaryCountry! : string;
-
-    @IsOptional()
-    @IsString()
-    logoURL? : string;
-}
 
 export class LoginDto {
     @IsEmail()

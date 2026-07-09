@@ -37,7 +37,9 @@ branchRouter.patch('/branches/:id',
 branchRouter.patch('/branches/:id/status', authenticate, idempotency({strict: false}), branchController.patchBranchStatus);
 
 // Internal (service-to-service)
-branchRouter.get('/internal/branches/:id', requireInternalApiKey, branchController.findByIdWithRestaurant);
+branchRouter.get('/internal/branches', requireInternalApiKey, withCache(60), branchController.findByIdsWithRestaurant);
+
+branchRouter.get('/internal/branches/:id', requireInternalApiKey,withCache(60), branchController.findByIdWithRestaurant);
 
 
 

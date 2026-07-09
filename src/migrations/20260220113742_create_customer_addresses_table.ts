@@ -16,7 +16,6 @@ export async function up(knex: Knex): Promise<void> {
         lat DECIMAL(10, 7) NOT NULL,
         lng DECIMAL(10, 7) NOT NULL,
         is_default BOOLEAN NOT NULL,
-        created_at TIMESTAMP NOT NULL,
         constraint fk_customer_addresses_user_id foreign key (user_id) references users(id)
         );
 CREATE INDEX idx_customer_addresses_user_id ON customer_addresses(user_id);

@@ -19,6 +19,7 @@ function toEntity (record: any){
         createdAt: record.created_at,
         updatedAt: record.updated_at,
         deliveryRadius: record.delivery_radius,
+        deliveryFee: record.delivery_fee,
         currency: record.currency,
         commission: record.commission,
     })
@@ -27,7 +28,7 @@ function toEntity (record: any){
 const BRANCH_COLUMNS = [
     "id", "restaurant_id", "lat", "lng", "country_code",
     "label", "is_active", "opens_at", "closes_at", "address_text",
-    "accept_orders", "created_at", "updated_at", "currency", "commission", "delivery_radius"
+    "accept_orders", "created_at", "updated_at", "currency", "commission", "delivery_radius", "delivery_fee", "location"
 ]
 
 export async function findBranchById(id: number){
@@ -70,13 +71,13 @@ export async function findNearByBranches(lat: number, lng: number, params?: Pagi
          .where("r.status", "active")
          .whereRaw(`ST_DWithin(ST_MakePoint(?, ?)::geography, ST_MakePoint(b.lng, b.lat)::geography, b.delivery_radius * 1000)`, [lng, lat]);
 
-     if(filters) {
-         query = applyFilters(query, filters);
-     }
+    //  if(filters) {
+    //      query = applyFilters(query, filters);
+    //  }
 
-     if(params) {
-         query = applyCursorPagination(query, params);
-     }
+    //  if(params) {
+    //      query = applyCursorPagination(query, params);
+    //  }
 
      const result = await query;
 
@@ -147,6 +148,11 @@ export async function updateBranchStatus(branchId: number, data: Partial<Branch>
     return toEntity(record[0]);
 }
 
+export async function findBranchesByIds(ids: number[]): Promise<Branch[]> {
+    if (ids.length === 0) return [];
+    const rows = await db("restaurant_branches").select(BRANCH_COLUMNS).whereIn("id", ids);
+    return rows.map(toEntity);
+}
 
 
 

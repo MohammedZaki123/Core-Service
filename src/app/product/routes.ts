@@ -19,7 +19,7 @@ productRouter.get('/restaurants/:restaurantId/products',
     requireRestaurantMember('restaurantId'),
     rbac({resource:"core:product", action:'read', allowSystemAdmin: true}),
     productController.findByRestaurant);
-productRouter.get('/branches/:branchId/products',withCache(), productController.findByBranch);
+productRouter.get('/branches/:branchId/products', productController.findByBranch);
 productRouter.get('/products/:id', productController.findById);
 productRouter.post('/restaurants/:restaurantId/products',
     authenticate,
@@ -36,3 +36,4 @@ productRouter.patch('/products/:id',
 
 productRouter.get('/internal/branches/:id/products', requireInternalApiKey, productController.findByBranchAndIds);
 productRouter.post('/internal/branches/:id/reserve-stock', requireInternalApiKey, productController.reserveStock);
+productRouter.post('/internal/branches/:id/undo-reserve-stock', requireInternalApiKey, productController.undoReserveStock);

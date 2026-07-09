@@ -35,7 +35,7 @@ import { BranchAccessNotPermitted } from "../../branch/errors";
 import {Knex} from "knex";
 import {TOKENS} from "../../../lib/di/tokens";
 import {UserService} from "../../user/service/user.service";
-import {IEmailProvider} from "../../../pkg/email/email.interface";
+import type {IEmailProvider} from "../../../pkg/email/email.interface";
 import {memberInvitationEmail} from "../templates/member-invitation";
 import {buildPaginationResult, FilterParams, PaginationParams} from "../../../lib/http/pagination/cursor-pagination";
 

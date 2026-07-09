@@ -1,7 +1,7 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-   "target": "ES2022",
+    "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "rootDir": "src",
@@ -13,7 +13,11 @@
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-//    "allowImportingTsExtensions": true
+    // "declaration": true,
+    // "emitDeclarationOnly": true,
+    // "allowImportingTsExtensions": true,
+//    "esModuleInterop": true,
+    "isolatedModules": true,
   },
     "include": ["src"],
 }

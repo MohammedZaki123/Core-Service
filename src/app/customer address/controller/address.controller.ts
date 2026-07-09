@@ -1,10 +1,10 @@
 import { Request, Response , NextFunction} from "express";
-import {CustomerAddressService} from "../service/address.service.js";
-import {validateBody, validatePathParameter} from "../../../lib/validation/validate.js";
-import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto.js";
+import {CustomerAddressService} from "../service/address.service";
+import {validateBody, validatePathParameter} from "../../../lib/validation/validate";
+import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto";
 import {injectable, inject} from "tsyringe";
-import {TOKENS} from "../../../lib/di/tokens.js";
-import {sendSuccess} from "../../../lib/http/response.js";
+import {TOKENS} from "../../../lib/di/tokens";
+import {sendSuccess} from "../../../lib/http/response";
 
 @injectable()
 export class CustomerAddressController {

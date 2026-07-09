@@ -78,13 +78,13 @@ export async function findProductByBranch(branchId: number, params?: PaginationP
             "pbd.is_available"
         );
 
-    if(filters) {
-        query = applyFilters(query, filters);
-    }
+    // if(filters) {
+    //     query = applyFilters(query, filters);
+    // }
 
-    if(params) {
-        query = applyCursorPagination(query, params);
-    }
+    // if(params) {
+    //     query = applyCursorPagination(query, params);
+    // }
 
     const rows = await query;
     return rows.map((row: any) => ({

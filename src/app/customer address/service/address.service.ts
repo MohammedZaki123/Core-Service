@@ -1,9 +1,9 @@
 import {
     createAddress, findAddressByCustomerID, getAddressesByUserId, updateAddress, deleteAddress,
     clearDefaultByUserId, findAddressById
-} from "../repository/address.repo.js";
-import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto.js";
-import {CustomerAddress} from "../entity/address.entity.js";
+} from "../repository/address.repo";
+import {addCustomerAddressDto, editCustomerAddressesDTO} from "../dto/address.dto";
+import {CustomerAddress} from "../entity/address.entity";
 
 import {AddressDoesNotExist} from "../errors";
 import {injectable} from "tsyringe";

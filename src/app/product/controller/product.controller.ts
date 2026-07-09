@@ -42,10 +42,12 @@ export class ProductController {
     findByBranch = async (req: Request , res: Response, next: NextFunction) => {
         try{
             const branchId = validatePathParameter(req.params.branchId, "Branch ID");
-            const params: PaginationParams = parsePaginationQuery(req.query, ['description','price','stock']);
-            const filters = parseFilterQuery(req.query, ['id', 'name', 'category_id']);
-            const result = await this.productService.findByBranch(branchId, params, filters);
-            sendPaginated(res, result.data, result.meta);
+            // const params: PaginationParams = parsePaginationQuery(req.query, ['description','price','stock']);
+            // const filters = parseFilterQuery(req.query, ['id', 'name', 'category_id']);
+            // const result = await this.productService.findByBranch(branchId, params, filters);
+            const result = await this.productService.findByBranch(branchId);
+            // sendPaginated(res, result.data, result.meta);
+            sendSuccess(res, result);
         }catch(err){
             next(err);
         }
@@ -106,6 +108,19 @@ export class ProductController {
             }
             const result = await this.productService.reserveStock(branchId, items);
             sendSuccess(res, result);
+        } catch (err) {
+            next(err);
+        }
+    }
+    undoReserveStock = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const branchId = Number(req.params.id);
+            const items = req.body?.items;
+            if (!Array.isArray(items) || items.length === 0) {
+                throw InvalidReserveItemsError;
+            }
+            await this.productService.undoReserveStock(branchId, items);
+            sendSuccess(res, null);
         } catch (err) {
             next(err);
         }

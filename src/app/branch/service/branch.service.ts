@@ -2,13 +2,13 @@ import {AddBranchDTO, PatchBranchDTO, PatchBranchStatusDTO} from "../dto/branch.
 import {
     createBranch, findNearByBranches, findBranchById,
     getBranchesByRestaurantId,
-    updateBranch, updateBranchStatus
+    updateBranch, updateBranchStatus, findBranchesByIds
 } from "../repository/branch.repo";
 import {Branch} from "../entity/branch.entity";
 import {BranchNotFound, EmptyInputData} from "../errors";
 import {Currency} from "../enum";
 import {SystemRole} from "../../user/enums";
-import {findRestaurantById} from "../../restaurant/repository/restaurant.repo";
+import {findRestaurantById, getRestaurants} from "../../restaurant/repository/restaurant.repo";
 import {NotAuthorized} from "../../../lib/auth/errors";
 import {RestaurantDoesNotExist} from "../../restaurant/errors";
 import {injectable} from "tsyringe";
@@ -149,11 +149,15 @@ export class BranchService {
     //         deliveryRadius: branch.deliveryRadius
     //     }
     // }
-    findNearBy = async (lat: number, lng: number, params: PaginationParams, filters: FilterParams[]) => {
-        const branches = await findNearByBranches(lat, lng, params, filters);
+    // findNearBy = async (lat: number, lng: number, params: PaginationParams, filters: FilterParams[]) => {
+    //     const branches = await findNearByBranches(lat, lng, params, filters);
 
-            return buildPaginationResult(branches, params.limit, params.sortBy);
-        // return {data: branches, meta: {nextCursor: null, hasMore: false, count: branches.length}};
+    //         return buildPaginationResult(branches, params.limit, params.sortBy);
+    //     // return {data: branches, meta: {nextCursor: null, hasMore: false, count: branches.length}};
+    // }
+
+    findNearBy = async (lat: number, lng: number) => {
+        return  await findNearByBranches(lat, lng);
     }
 
     private filterBranches (branches: Branch[]) {
@@ -179,7 +183,31 @@ export class BranchService {
         const branch = await findBranchById(branchId);
         if (!branch) return null;
         const restaurant = await findRestaurantById(branch.restaurantId);
-        return {branch, restaurantStatus: restaurant?.status ?? "unknown"};
+        if(!restaurant) return null;
+        return {
+            branch,
+            restaurantStatus: restaurant.status,
+            restaurantOwnerId: restaurant.ownerId,
+        };
+    }
+
+    findByIdsWithRestaurant = async (branchIds: number[]): Promise<BranchWithRestaurant[]> => {
+        if (branchIds.length === 0) return [];
+        const branches = await findBranchesByIds(branchIds);
+        if (branches.length === 0) return [];
+        const restaurants = await getRestaurants(Array.from(new Set(branches.map((b) => b.restaurantId))));
+        const byId = new Map(restaurants.map((r) => [Number(r.id), r]));
+        const out: BranchWithRestaurant[] = [];
+        for (const branch of branches) {
+            const restaurant = byId.get(Number(branch.restaurantId));
+            if (!restaurant) continue;
+            out.push({
+                branch,
+                restaurantStatus: restaurant.status,
+                restaurantOwnerId: Number(restaurant.ownerId),
+            });
+        }
+        return out;
     }
 
 }
