@@ -13,7 +13,6 @@
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    // "declaration": true,
     // "emitDeclarationOnly": true,
     // "allowImportingTsExtensions": true,
 //    "esModuleInterop": true,
