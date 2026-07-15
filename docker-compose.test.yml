@@ -8,7 +8,7 @@ services:
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: boot_postgres
       POSTGRES_DB: quickbite_core_test
     healthcheck:
       # Command that returns 0 when Postgres is ready.
