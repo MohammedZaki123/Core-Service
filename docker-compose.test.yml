@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: quickbite_test
     healthcheck:
       # Command that returns 0 when Postgres is ready.
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d quickbite_core_test" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d quickbite_test" ]
       interval: 5s
       timeout: 3s
       retries: 10
