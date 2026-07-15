@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: boot_postgres
-      POSTGRES_DB: quickbite_core_test
+      POSTGRES_DB: quickbite_test
     healthcheck:
       # Command that returns 0 when Postgres is ready.
       test: [ "CMD-SHELL", "pg_isready -U postgres -d quickbite_core_test" ]
