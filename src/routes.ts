@@ -18,7 +18,7 @@ routes.use("/user", userRouter);
 
 routes.use("/customer/addresses", customerAddressRouter);
 
-routes.use("/restaurant", restaurantRouter);
+routes.use("/restaurants", restaurantRouter);
 
 routes.use("/", branchRouter);
 

@@ -38,7 +38,7 @@ export class RestaurantController{
             // createdAt time problem: timestamp response is 2 hours less than actual value stored in database
             // result: cursor pagination result incorrect
             // solution: Just tell frontend team to use nextCursor variable and add two hours to in cursor query parameter variable.
-            const params: PaginationParams = parsePaginationQuery(req.query,['createdAt','name','id']);
+            const params: PaginationParams = parsePaginationQuery(req.query,['createdAt','name','status']);
             const filters = parseFilterQuery(req.query,['id','status','name']);
             const restaurants = await this.restaurantService.getAllRestaurants(params, filters);
             sendPaginated(res,restaurants.data,restaurants.meta)

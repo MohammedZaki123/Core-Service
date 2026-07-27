@@ -30,7 +30,7 @@ export class ProductService {
         if(!restaurant){
             throw RestaurantDoesNotExist
         }
-        const categories = await findCategoriesByRestaurant(restaurantId, params, filters);
+        const categories = await findCategoriesByRestaurant(restaurantId);
 
         if(params) {
             return buildPaginationResult(categories, params.limit, params.sortBy);
@@ -44,7 +44,7 @@ export class ProductService {
         if (role !== SystemRole.SYSTEM_ADMIN && Number(restaurant.ownerId) !== Number(userId)) {
             throw NotAuthorized;
         }
-        const products = await findProductsByRestaurant(restaurantId, params, filters);
+        const products = await findProductsByRestaurant(restaurantId);
 
         if(params) {
             return buildPaginationResult(products, params.limit, params.sortBy);

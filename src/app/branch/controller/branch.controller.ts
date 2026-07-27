@@ -46,10 +46,11 @@ export class BranchController {
     findByRestaurant = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const restaurantId = validatePathParameter(req.params.restaurantId, "Restaurant ID");
-            const params: PaginationParams = parsePaginationQuery(req.query);
-            const filters = parseFilterQuery(req.query, ['id', 'label', 'currency', 'is_active']);
-            const result = await this.branchService.getBranches(restaurantId, params, filters);
-            sendPaginated(res, result.data, result.meta);
+            // const params: PaginationParams = parsePaginationQuery(req.query);
+            // const filters = parseFilterQuery(req.query, ['id', 'label', 'currency', 'is_active']);
+            const result = await this.branchService.getBranches(restaurantId);
+            // sendPaginated(res, result.data, result.meta);
+            sendSuccess(res, result, 200);
         } catch (err) {
             next(err)
         }

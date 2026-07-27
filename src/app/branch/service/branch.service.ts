@@ -22,10 +22,10 @@ import {EVENT_TYPES} from "../../../lib/events/event-types";
 @injectable()
 export class BranchService {
 
-    getBranches = async (restaurantID: number, params: PaginationParams, filters: FilterParams[])  => {
+    getBranches = async (restaurantID: number, params?: PaginationParams, filters?: FilterParams[])  => {
         const branches = await getBranchesByRestaurantId(restaurantID, params, filters);
-        const filtered = this.filterBranches(branches);
-            return buildPaginationResult(filtered, params.limit, params.sortBy);
+        return this.filterBranches(branches);
+        // return buildPaginationResult(filtered, params.limit, params.sortBy);
 
     }
     createBranch = async (restaurantID: number,userId: number,role: SystemRole, data: AddBranchDTO) => {

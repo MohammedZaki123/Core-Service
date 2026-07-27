@@ -166,7 +166,7 @@ export class MemberService {
         if(!restaurant){
             throw RestaurantDoesNotExist
         }
-        const members = await findMembersByRestaurantId(restaurantId, params, filters);
+        const members = await findMembersByRestaurantId(restaurantId);
 
         if(params) {
             return buildPaginationResult(members, params.limit, params.sortBy);

@@ -18,9 +18,9 @@ export class ProductController {
     findCategories = async (req: Request , res: Response, next: NextFunction) => {
         try{
             const restaurantId = validatePathParameter(req.params.restaurantId, "Restaurant ID");
-            const params: PaginationParams = parsePaginationQuery(req.query, ['id','name']);
-            const filters = parseFilterQuery(req.query, ['id', 'name']);
-            const result = await this.productService.findCategories(restaurantId, params, filters);
+            // const params: PaginationParams = parsePaginationQuery(req.query, ['id','name']);
+            // const filters = parseFilterQuery(req.query, ['id', 'name']);
+            const result = await this.productService.findCategories(restaurantId);
             sendPaginated(res, result.data, result.meta);
         }catch(err){
             next(err);
@@ -30,9 +30,9 @@ export class ProductController {
     findByRestaurant = async (req: Request , res: Response, next: NextFunction) => {
         try{
             const restaurantId = validatePathParameter(req.params.restaurantId, "Restaurant ID");
-            const params: PaginationParams = parsePaginationQuery(req.query);
-            const filters = parseFilterQuery(req.query, ['id', 'name', 'category_id']);
-            const result = await this.productService.findByRestaurant(restaurantId, req.user?.role as SystemRole, req.user?.userId!, params, filters);
+            // const params: PaginationParams = parsePaginationQuery(req.query);
+            // const filters = parseFilterQuery(req.query, ['id', 'name', 'category_id']);
+            const result = await this.productService.findByRestaurant(restaurantId, req.user?.role as SystemRole, req.user?.userId!);
             sendPaginated(res, result.data, result.meta);
         }catch(err){
             next(err);

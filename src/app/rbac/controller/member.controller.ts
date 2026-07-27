@@ -27,9 +27,9 @@ export class MemberController {
     listMembers = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const restaurantId = Number(req.params.restaurantId);
-            const params: PaginationParams = parsePaginationQuery(req.query, ['email','userId']);
-            const filters = parseFilterQuery(req.query, ['userId', 'email','status']);
-            const result = await this.memberService.listMembers(restaurantId, params, filters);
+            // const params: PaginationParams = parsePaginationQuery(req.query, ['email','userId']);
+            // const filters = parseFilterQuery(req.query, ['userId', 'email','status']);
+            const result = await this.memberService.listMembers(restaurantId);
             sendPaginated(res, result.data, result.meta);
         }catch(err){
             next(err);

@@ -7,3 +7,4 @@ export function correlationId(req: Request, res: Response, next: NextFunction) {
     res.setHeader('X-CorrelationId', req.correlationId);
     next();
 }
+    
