@@ -1,15 +1,15 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgis/postgis:16-3.4
     container_name: quickbite_core_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: boot_postgres
       POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
-    volumes:
+    # ports:
+    #   - "5432:5432"
+    volumes:  
       - postgres-data:/var/lib/postgresql/data
       - ./scripts/docker/01-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
@@ -20,8 +20,8 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
@@ -30,21 +30,39 @@ services:
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
     ports:
-      - "5672:5672"
+      # - "5672:5672"
       - "15672:15672"
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics","-q","ping"]
       interval: 10s
       retries: 10
 
+  migration-runner:
+    build: 
+      context: .
+      target: migration
+    command: ["npx", "tsx", "scripts/migrate-all.ts"]
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   core-service:
-    build: .
+    build: 
+      context: .
+      target: production
     env_file:
       - .env
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    networks:
+      - default
+      - quickbite-network
     ports:
       - "3000:3000"
     depends_on:
@@ -54,16 +72,22 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-  
+      migration-runner:
+        condition: service_completed_successfully
+
   core-worker:
-    build: .
-    command: ["node","dist/worker.js"]
+    build: 
+      context: .
+      target: production
     env_file:
       - .env
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    networks:
+      - default
+      - quickbite-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,8 +95,14 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      migration-runner:
+        condition: service_completed_successfully
+networks:
+  quickbite-network:
+    external: true
 volumes:
   postgres-data:
+
 
 
   
